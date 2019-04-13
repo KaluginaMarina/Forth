@@ -104,3 +104,56 @@ native lesser, ">"
 .lesser:
 	push 0
 	jmp next
+
+native and, "and"
+   pop rax
+   pop rdx
+   and rax, rdx
+   push rax
+   jmp next
+
+native or, "or"
+   pop rax
+   pop rdx
+   or rax, rdx
+   push rax
+   jmp next
+
+native land, "land"
+   pop rax
+   pop rdx
+   test rax, rax
+   jz .no
+   push rdx
+   jmp next
+
+.no:
+   push rax
+   jmp next
+
+native not, "not"
+   pop rax
+   test rax, rax
+   jz .zero
+   xor rax, rax
+   push rax
+   jmp next
+ 
+.zero:
+   mov rax, 1
+   push rax
+   jmp next
+
+native lor, "lor"
+   pop rax
+   pop rdx
+   test rax, rax
+   jnz .yes
+   push rdx
+   jmp next
+
+.yes:
+   push rax
+   jmp next
+
+
