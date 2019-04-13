@@ -20,3 +20,14 @@ native %1, %2, 0
 native drop, "drop"
   pop rax
   jmp next
+
+native swap, "swap"
+	pop rax
+	pop rdx
+	push rax
+	push rdx
+	jmp next
+
+native dup, "dup"
+	push qword[rsp]
+	jmp next
