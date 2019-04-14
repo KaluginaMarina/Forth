@@ -156,4 +156,47 @@ native lor, "lor"
    push rax
    jmp next
 
+native to_ret, ">r"
+	pop rax
+	sub rstack, 8
+	mov qword [rstack], rax
+	jmp next
 
+native from_ret, "r>"
+	mov rax, qword[rstack]
+	add rstack, 8
+	push rax
+	jmp next
+
+native ret_fetch, "r@"
+	push qword [rstack]
+	jmp next
+
+native fetch, "@"
+	pop rax
+	mov r10, [rax]
+	push r10
+	jmp next
+
+native wr_by_address, "!"
+	pop rax
+	pop r10
+	mov [r10], rax	
+	jmp next
+
+native wr_char, "c!"
+  pop rax
+  pop r10
+  mov byte[r10], al
+  jmp next
+
+native read_char, "c@"
+	pop rax
+	movzx r10, byte[rax]
+	push r10
+	jmp next
+
+native execute, "execute"
+	pop rax
+	mov w, rax
+	jmp [rax]	
