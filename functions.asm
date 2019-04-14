@@ -199,4 +199,27 @@ native read_char, "c@"
 native execute, "execute"
 	pop rax
 	mov w, rax
-	jmp [rax]	
+	jmp [rax]
+
+native docol, "docol"
+   sub rstack, 8
+   mov [rstack], pc
+   add w, 8
+   mov pc, w
+   jmp next
+
+native branch, "branch"
+   mov pc, [pc]
+   jmp next
+
+native branch0, "branch0"
+   pop rax
+   test rax, rax
+   jnz .skip
+   mov pc, [pc]
+   jmp next
+
+.skip:
+   add pc, 8
+   jmp next
+ 
