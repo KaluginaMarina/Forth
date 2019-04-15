@@ -222,4 +222,14 @@ native branch0, "branch0"
 .skip:
    add pc, 8
    jmp next
+
+native exit, "exit"
+   mov pc, [rstack]
+   add rstack, 8
+   jmp next 
+
+native lit, "lit"
+   push qword [pc]
+   add pc, 8
+   jmp next
  
