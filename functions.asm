@@ -296,4 +296,59 @@ native semicolon, ";", 1
    mov qword[state], 0         ; вернуть состояние
    jmp next                    ;
 
+native emit, "emit"
+   pop rdi
+   call print_char
+   jmp next
+
+native word, "word"
+   mov rdi, input_buf
+   mov rsi, 1024
+   call read_word
+   mov rdi, rax
+   pop rsi 
+   mov rdx, 1024
+   call string_copy
+   push rdx
+   jmp next
+
+native find_word, "find_word"
+   pop rsi
+   mov rdi, last_word
+
+.loop:
+   push rdi
+   lea rdi, [rdi + 8]
+   push rsi
+   call string_equals
+   pop rsi
+   pop rdi
+   cmp rax, 0
+   je .find
+   mov rdi, [rdi]
+   cmp rdi, 0
+   je .fail 
+   jmp .loop
+
+.find:
+   mov rax, rdi
+   jmp .return
+
+.fail:
+   mov rax, 0
+
+.return:
+   push rax
+   jmp next
+
+native cfa, "cfa"
+   pop rdi
+   lea rdi, [rdi + 8]
+   push rdi
+   call string_length
+   pop rdi
+   lea rax, [rdi + rax + 2]
+   push rax
+   jmp next
+
 
