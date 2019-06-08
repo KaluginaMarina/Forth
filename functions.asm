@@ -232,4 +232,68 @@ native lit, "lit"
    push qword [pc]
    add pc, 8
    jmp next
- 
+
+native rot, "rot"
+   pop rax
+   pop rdx
+   pop rcx
+   push rax
+   push rcx
+   push rdx
+   jmp next
+
+native show_stack, ".S"
+   mov rcx, rsp
+
+.loop:
+   cmp rcx, [stack_start]
+   je next
+   mov rdi, [rcx]
+   push rcx
+   call print_int
+   call print_newline
+   pop rcx
+   add rcx, 8
+   jmp .loop 
+
+native dot, "."
+   pop rdi
+   call print_int
+   call print_newline
+   jmp next 
+
+native colon, ":"
+   mov r8, [here]              ; предыдущий адрес
+   mov r9, [last_word]         
+   mov qword[r8], r9           
+   mov qword[last_word], r8    ; последнее слово на текущее
+   add qword[here], 8          
+
+   mov rdi, input_buf          ; чтение имени нового слова 
+   mov rsi, 1024               
+   call read_word              
+   mov rdi, rax                 
+   mov rsi, [here]              
+   mov rdx, 1024               
+   push rsi                    
+   call string_copy            ; поместить в определение слова
+   pop rsi                     
+
+   mov rdi, rsi                 
+   call string_length          
+   add qword[here], rax        
+   add qword[here], 2         
+   mov r8, [here]              
+   mov qword[r8], docol_impl   ; поместить docol 
+   add qword[here], 8          
+   mov qword[state], 1         ; состояние -- компиляция
+   jmp next                    
+   
+native semicolon, ";", 1
+   mov r8, [here]              
+   mov qword[r8], xt_exit      ; xt_exit в конец 
+   add qword[here], 8          ; 
+   mov qword[state], 0         ; вернуть состояние
+   jmp next                    ;
+
+
