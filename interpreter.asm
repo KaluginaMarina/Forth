@@ -9,8 +9,7 @@ global _start
 ;----------------------------------
 section .text
 
-%include "debug.asm"
-;%include "functions.data"
+%include "functions.asm"
 
 ;----------------------------------
 section .data
