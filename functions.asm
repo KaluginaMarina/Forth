@@ -351,4 +351,32 @@ native cfa, "cfa"
    push rax
    jmp next
 
+native bye, "bye"
+   call exit
+
+native inbuf, "inbuf"
+   mov rdi, input_buf             
+   mov rsi, 1024                  
+   call read_word                 
+   push rax
+   jmp next                       
+
+native exec, "exec"
+   pop rax
+   mov w, rax 
+   jmp [rax]
+
+native count, "count"
+   pop rdi
+   call string_length             
+   push rax
+   jmp next
+
+native number, "number"
+   pop rdi
+   call parse_int                 
+   push rdx
+   push rax
+   jmp next
+
 
