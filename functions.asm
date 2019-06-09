@@ -1,3 +1,8 @@
+%include "util.inc"
+%include "macro.inc"
+
+;--------------------------------
+
 %macro native 3
     section .data
     w_%1: dq _lw
@@ -427,4 +432,106 @@ native check_branch, "check_branch"
 native here, "here"
    push qword[here]
    jmp next
+
+
+native last_word, "last_word"
+   push qword[last_word]
+   jmp next
+
+native IMMEDIATE, "IMMEDIATE"
+   mov rdi, [last_word]
+   lea rdi, [rdi + 8]
+   push rdi
+   call string_length
+   pop rdi
+   lea rax, [rdi + rax + 1]
+   mov byte[rax], 1 
+   jmp next
+
+colon selector, "selector"
+.loop:
+   dq xt_put_state
+   dq xt_branch0
+   dq .interpret
+   dq xt_compiler
+   dq xt_branch
+   dq .loop
+
+.interpret:
+   dq xt_interpret
+   dq xt_branch
+   dq .loop
+
+colon compiler, "compiler"
+   dq xt_inbuf
+   dq xt_dup
+   dq xt_find_word
+   dq xt_dup
+   dq xt_branch0
+   dq .not_word
+
+.word:
+   dq xt_swap
+   dq xt_drop
+   dq xt_dup
+   dq xt_immediate
+   dq xt_branch0
+   dq .add_word
+   dq xt_cfa
+   dq xt_exec
+   dq xt_exit 
+
+.add_word:
+   dq xt_cfa
+   dq xt_add_word
+   dq xt_exit
+
+.not_word:
+   dq xt_drop
+   dq xt_dup
+   dq xt_count
+   dq xt_dup
+   dq xt_branch0
+   dq .empty_line
+   dq xt_swap
+   dq xt_dup
+   dq xt_number
+   dq xt_to_ret
+   dq xt_rot
+   dq xt_rot
+   dq xt_equals
+   dq xt_branch0
+   dq .not_found 
+   dq xt_drop
+   dq xt_from_ret
+   dq xt_check_branch
+   dq xt_branch0
+   dq .no_branch
+
+.branch:
+   dq xt_add_word 
+   dq xt_exit
+
+.no_branch:
+   dq xt_lit
+   dq xt_lit
+   dq xt_add_word
+   dq xt_branch
+   dq .branch
+
+.not_found:
+   dq xt_from_ret
+   dq xt_drop
+   dq xt_lit, not_found
+   dq xt_prints
+   dq xt_prints
+   dq xt_lit, 10
+   dq xt_emit
+   dq xt_exit
+
+.empty_line:
+   dq xt_drop
+   dq xt_drop
+   dq xt_exit
+
 
