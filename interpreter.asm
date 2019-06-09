@@ -1,4 +1,4 @@
-;%include "util.inc"
+%include "util.inc"
 
 global _start
 

@@ -379,4 +379,52 @@ native number, "number"
    push rax
    jmp next
 
+native prints, "prints"
+   pop rdi
+   call print_string
+   jmp next
+
+native put_state, "put_state"
+   push qword[state]
+   jmp next
+
+native add_word, "add_word"
+   pop rax
+   mov r9, [here]                 ; if not immediate, put it xt here
+   mov [r9], rax                  ;
+   add qword[here], 8             ;
+   jmp next                       ;
+
+native immediate, "immediate"
+   pop rdi
+   lea rdi, [rdi + 8]
+   call string_length
+   lea rax, [rdi + rax + 1]
+   mov rdi, rax
+   xor rax, rax
+   mov al, byte[rdi]
+   push rax
+   jmp next
+
+native check_branch, "check_branch"
+   sub qword[here], 8             ; check if prev word is branch or
+   mov r8, [here]                 ; branch0
+   cmp qword[r8], xt_branch       ;
+   je .branch                     ;
+   cmp qword[r8], xt_branch0      ;
+   je .branch                     ;
+   mov rax, 0
+   jmp .return
+
+.branch:
+   mov rax, 1
+
+.return: 
+   push rax
+   add qword[here], 8
+   jmp next
+
+native here, "here"
+   push qword[here]
+   jmp next
 
